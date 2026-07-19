@@ -5,12 +5,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-36qnzv8u%+1j(jcu&(#dvmw17%6zs3n$f($c2qp1cjop#jw6l6'
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
-    "192.168.1.69",
+    ".onrender.com",
 ]
 
 INSTALLED_APPS = [
@@ -31,6 +31,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -135,3 +136,5 @@ EMAIL_HOST_USER = "glorianushka@gmail.com"
 EMAIL_HOST_PASSWORD = "lpycyglzchejhdjj"
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
