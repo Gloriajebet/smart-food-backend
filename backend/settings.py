@@ -99,7 +99,7 @@ STATIC_URL = 'static/'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://192.168.1.69:3000",
-    "https://smart-food-frontend-xi.vercel.app/"
+    "https://smart-food-frontend-xi.vercel.app"
 ]
 
 REST_FRAMEWORK = {
