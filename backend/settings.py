@@ -100,6 +100,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://192.168.1.69:3000",
     "https://smart-food-frontend-xi.vercel.app",
+    "https://smart-food-frontend-937l8mb3f-gloria13.vercel.app"
 ]
 
 REST_FRAMEWORK = {
