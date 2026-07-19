@@ -8,9 +8,7 @@ SECRET_KEY = 'django-insecure-36qnzv8u%+1j(jcu&(#dvmw17%6zs3n$f($c2qp1cjop#jw6l6
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    "127.0.0.1",
-    "localhost",
-    ".onrender.com",
+   "smart-food-dyp3.onrender.com"
 ]
 
 INSTALLED_APPS = [
