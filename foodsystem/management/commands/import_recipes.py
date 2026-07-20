@@ -13,7 +13,7 @@ class Command(BaseCommand):
         zip_file = ZipFile("food_recipes.csv.zip")
         csv_file = zip_file.namelist()[0]
         df = pd.read_csv(zip_file.open(csv_file))
-        user = User.objects.get(username="Gloria")
+        user = User.objects.get(username="Gloria Masit")
         imported = 0
 
         for _, row in df.iterrows():
