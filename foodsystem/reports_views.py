@@ -39,14 +39,14 @@ class ReportsAPIView(APIView):
         purchase_date__gte=today - timedelta(days=30)
     )
 
-        used_before_expiry = foods.filter(
+        used_before_expiry = report_foods.filter(
             is_used=True,
             used_date__lte=F("expiry_date")
         ).count()
 
         today = timezone.now().date()
 
-        expired = foods.filter(
+        expired = report_foods.filter(
             expiry_date__lt=today,
             is_used=False
         ).count()
@@ -60,7 +60,7 @@ class ReportsAPIView(APIView):
                 (used_before_expiry / total) * 100
             )
 
-        money_saved = foods.filter(
+        money_saved = report_foods.filter(
             is_used=True,
             used_date__lte=F("expiry_date")
         ).aggregate(
@@ -75,7 +75,7 @@ class ReportsAPIView(APIView):
 
             start = end - timedelta(days=6)
 
-            wasted = foods.filter(
+            wasted = report_foods.filter(
                 expiry_date__range=[start, end],
                 is_used=False
             ).count()
@@ -88,8 +88,8 @@ class ReportsAPIView(APIView):
         weeks.reverse()
 
         return Response({
-            "total_items": foods.count(),
-            "expiring_soon": foods.filter(
+            "total_items": report_foods.count(),
+            "expiring_soon": report_foods.filter(
         expiry_date__gte=today,
         expiry_date__lte=today + timedelta(days=3)
     ).count(),
@@ -106,7 +106,7 @@ class ReportsAPIView(APIView):
             "unit": food.unit,
             "expiry_date": food.expiry_date,
         }
-        for food in foods
+        for food in report_foods
     ]
 })
         
