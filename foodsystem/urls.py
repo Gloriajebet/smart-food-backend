@@ -6,7 +6,6 @@ from .views import login_user
 from .views import dashboard_summary
 from .views import forgot_password
 from .views import profile
-from .views import reports
 from rest_framework_simplejwt.views import(
     TokenObtainPairView,
     TokenRefreshView,
@@ -31,11 +30,6 @@ urlpatterns = [
     path("register/", register_user),
     path("login/", login_user),
     path("alerts/", expiry_alerts),
-    path(
-      "reports/",
-      reports,
-      name="reports"
-    ),
     path(
         "token/",
         TokenObtainPairView.as_view(),
