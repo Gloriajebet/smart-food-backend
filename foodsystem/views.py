@@ -249,8 +249,9 @@ def reports(request):
             end = today - timedelta(days=i * 7)
 
             used = foods.filter(
-                used_date__range=[start, end],
-                is_used=True
+                is_used=True,
+                used_date__gte=start,
+                used_date__lt=end
             ).count()
 
             wasted = foods.filter(
