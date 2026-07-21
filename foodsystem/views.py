@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import default_token_generator
 from django.utils import timezone
+from django.db.models import Sum, F
 from django.core.mail import send_mail
 from django.urls import reverse
 from datetime import timedelta
@@ -220,7 +221,10 @@ def reports(request):
 
     items_wasted = expired_items.count()
 
-    items_used = total_items - items_wasted
+    items_used = foods.filter(
+    is_used=True,
+    used_date__isnull=False
+).count()
 
     waste_reduction = 0
 
@@ -228,6 +232,14 @@ def reports(request):
         waste_reduction = round(
             (items_used / total_items) * 100
         )
+
+    money_saved = foods.filter(
+    is_used=True,
+    used_date__isnull=False,
+    used_date__lte=F("expiry_date")
+).aggregate(
+    total=Sum("price")
+)["total"] or 0
 
     return Response({
 
@@ -241,7 +253,7 @@ def reports(request):
 
         "items_wasted": items_wasted,
 
-        "money_saved": 0,
+        "money_saved": money_saved,
 
         "waste_reduction": waste_reduction,
 
@@ -250,12 +262,12 @@ def reports(request):
             many=True
         ).data,
 
-        "weekly_trend":[
-            {
-                "week":"Week 1",
-                "wasted":items_wasted
-            }
-        ]
+        "weekly_trend": [
+    {
+        "week": "Week 1",
+        "wasted": items_wasted
+    }
+]
     })
 
 @api_view(["PATCH"])
