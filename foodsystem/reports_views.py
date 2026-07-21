@@ -75,7 +75,7 @@ class ReportsAPIView(APIView):
 
             start = end - timedelta(days=6)
 
-            wasted = report_foods.filter(
+            wasted = foods.filter(
                 expiry_date__range=[start, end],
                 is_used=False
             ).count()
