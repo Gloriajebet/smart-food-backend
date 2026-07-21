@@ -248,6 +248,11 @@ def reports(request):
             start = today - timedelta(days=(i + 1) * 7 - 1)
             end = today - timedelta(days=i * 7)
 
+            used = foods.filter(
+                used_date__range=[start, end],
+                is_used=True
+            ).count()
+
             wasted = foods.filter(
                expiry_date__range=[start, end],
                is_used=False
@@ -255,7 +260,8 @@ def reports(request):
 
             weeks.append({
                 "week": f"Week {4 - i}",
-                "wasted": wasted
+                "wasted": wasted,
+                "used": used,
             })
             weeks.reverse()
 
