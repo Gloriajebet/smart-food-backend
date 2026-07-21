@@ -25,17 +25,17 @@ class ReportsAPIView(APIView):
         today = timezone.now().date()
 
         if period == "today":
-         foods = foods.filter(
+         report_foods = foods.filter(
         purchase_date=today
  )
 
         elif period == "week":
-         foods = foods.filter(
+         report_foods = foods.filter(
         purchase_date__gte=today - timedelta(days=7)
     )
 
         else:
-         foods = foods.filter(
+         report_foods = foods.filter(
         purchase_date__gte=today - timedelta(days=30)
     )
 
@@ -88,9 +88,25 @@ class ReportsAPIView(APIView):
         weeks.reverse()
 
         return Response({
+            "total_items": foods.count(),
+            "expiring_soon": foods.filter(
+        expiry_date__gte=today,
+        expiry_date__lte=today + timedelta(days=3)
+    ).count(),
+            "expired": expired,
             "waste_reduction": waste_reduction,
             "money_saved": money_saved,
             "items_used": used_before_expiry,
             "items_wasted": expired,
-            "weekly_trend": weeks
-        })
+            "weekly_trend": weeks,
+            "foods": [
+        {
+            "name": food.name,
+            "quantity": food.quantity,
+            "unit": food.unit,
+            "expiry_date": food.expiry_date,
+        }
+        for food in foods
+    ]
+})
+        
