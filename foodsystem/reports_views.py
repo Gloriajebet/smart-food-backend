@@ -70,15 +70,14 @@ class ReportsAPIView(APIView):
         weeks = []
 
         for i in range(4):
-
+            start = today - timedelta(days=(i+1) * 7)
             end = today - timedelta(days=i * 7)
 
-            start = end - timedelta(days=6)
-
             wasted = foods.filter(
-                expiry_date__range=[start, end],
-                is_used=False
-            ).count()
+        expiry_date__gte=start,
+        expiry_date__lt=end,
+        is_used=False
+    ).count()
 
             weeks.append({
                 "week": f"Week {4 - i}",
