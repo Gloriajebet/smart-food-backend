@@ -243,9 +243,10 @@ def reports(request):
     
     weeks = []
 
-    for i in range(4):
+    for i in range(3, -1, -1):
+
+            start = today - timedelta(days=(i + 1) * 7 - 1)
             end = today - timedelta(days=i * 7)
-            start = today - timedelta(days=6)
 
             wasted = foods.filter(
                expiry_date__range=[start, end],
