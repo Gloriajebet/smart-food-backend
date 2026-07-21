@@ -10,6 +10,7 @@ from rest_framework_simplejwt.views import(
     TokenObtainPairView,
     TokenRefreshView,
 )
+from .views import mark_food_used
 
 router = DefaultRouter()
 router.register(
@@ -42,4 +43,9 @@ urlpatterns = [
     ),
     path("forgot-password/", forgot_password),
     path("profile/", profile),
+    path(
+    "fooditems/<int:pk>/mark-used/",
+    mark_food_used,
+    name="mark-food-used"
+),
 ]

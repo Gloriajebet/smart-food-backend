@@ -257,3 +257,27 @@ def reports(request):
             }
         ]
     })
+
+@api_view(["PATCH"])
+@permission_classes([IsAuthenticated])
+def mark_food_used(request, pk):
+
+    try:
+        food = FoodItem.objects.get(
+            id=pk,
+            user=request.user
+        )
+
+    except FoodItem.DoesNotExist:
+        return Response(
+            {"error": "Food item not found"},
+            status=404
+        )
+
+    food.is_used = True
+    food.used_date = timezone.now().date()
+    food.save()
+
+    return Response({
+        "message": "Food marked as used."
+    })
