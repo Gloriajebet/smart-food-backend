@@ -240,6 +240,25 @@ def reports(request):
 ).aggregate(
     total=Sum("price")
 )["total"] or 0
+    
+    weeks = []
+
+    for i in range(4):
+            end = today - timedelta(days=i * 7)
+            start = today - timedelta(days=6)
+
+            wasted = foods.filter(
+               expiry_date__range=[start, end],
+               is_used=False
+            ).count()
+
+            weeks.append({
+                "week": f"Week {4 - i}",
+                "wasted": wasted
+            })
+
+    weeks.reverse()
+
 
     return Response({
 
@@ -262,12 +281,7 @@ def reports(request):
             many=True
         ).data,
 
-        "weekly_trend": [
-    {
-        "week": "Week 1",
-        "wasted": items_wasted
-    }
-]
+        "weekly_trend": weeks,
     })
 
 @api_view(["PATCH"])
