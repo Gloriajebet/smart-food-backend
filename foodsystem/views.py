@@ -264,7 +264,7 @@ def reports(request):
                 "wasted": wasted,
                 "used": used,
             })
-            weeks.reverse()
+           
 
     return Response({
 
