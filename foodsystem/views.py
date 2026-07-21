@@ -257,6 +257,7 @@ def reports(request):
                 "week": f"Week {4 - i}",
                 "wasted": wasted
             })
+            weeks.reverse()
 
     return Response({
 
