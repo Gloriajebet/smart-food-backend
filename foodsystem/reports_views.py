@@ -60,8 +60,9 @@ class ReportsAPIView(APIView):
                 (used_before_expiry / total) * 100
             )
 
-        money_saved = report_foods.filter(
+        money_saved = foods.filter(
             is_used=True,
+            used_date__isNull=False,
             used_date__lte=F("expiry_date")
         ).aggregate(
             total=Sum("price")
