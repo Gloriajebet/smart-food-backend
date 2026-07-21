@@ -198,3 +198,62 @@ def profile(request):
         return Response(serializer.data)
 
     return Response(serializer.errors, status=400)
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def reports(request):
+
+    today = timezone.now().date()
+
+    foods = FoodItem.objects.filter(user=request.user)
+
+    total_items = foods.count()
+
+    expired_items = foods.filter(
+        expiry_date__lt=today
+    )
+
+    expiring_soon = foods.filter(
+        expiry_date__gte=today,
+        expiry_date__lte=today + timedelta(days=3)
+    )
+
+    items_wasted = expired_items.count()
+
+    items_used = total_items - items_wasted
+
+    waste_reduction = 0
+
+    if total_items > 0:
+        waste_reduction = round(
+            (items_used / total_items) * 100
+        )
+
+    return Response({
+
+        "total_items": total_items,
+
+        "expired": items_wasted,
+
+        "expiring_soon": expiring_soon.count(),
+
+        "items_used": items_used,
+
+        "items_wasted": items_wasted,
+
+        "money_saved": 0,
+
+        "waste_reduction": waste_reduction,
+
+        "foods": FoodItemSerializer(
+            foods,
+            many=True
+        ).data,
+
+        "weekly_trend":[
+            {
+                "week":"Week 1",
+                "wasted":items_wasted
+            }
+        ]
+    })
