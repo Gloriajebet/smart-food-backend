@@ -257,9 +257,6 @@ def reports(request):
                 "wasted": wasted
             })
 
-    weeks.reverse()
-
-
     return Response({
 
         "total_items": total_items,
