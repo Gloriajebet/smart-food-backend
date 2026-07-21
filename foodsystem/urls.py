@@ -33,7 +33,6 @@ urlpatterns = [
     path("register/", register_user),
     path("login/", login_user),
     path("alerts/", expiry_alerts),
-    path("reports/, reports"),
     path(
         "token/",
         TokenObtainPairView.as_view(),
@@ -46,6 +45,11 @@ urlpatterns = [
     ),
     path("forgot-password/", forgot_password),
     path("profile/", profile),
+    path(
+    "reports/",
+    reports,
+    name="reports",
+),
     path(
     "fooditems/<int:pk>/mark-used/",
     mark_food_used,
