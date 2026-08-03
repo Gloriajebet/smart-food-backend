@@ -154,7 +154,7 @@ def forgot_password(request):
         )
     token = default_token_generator.make_token(user)
     reset_link = (
-        f"http://localhost:3000/reset-password/"
+        f"https://smart-food-frontend-xi.vercel.app/reset-password/"
         f"{user.id}/{token}"
     )
     send_mail(
