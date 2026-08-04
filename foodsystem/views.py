@@ -142,25 +142,28 @@ def expiry_alerts(request):
         })
     return Response(alerts)
 
+@from django.conf import settings
+import traceback
+
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def forgot_password(request):
-    email = request.data.get("email")
+
     try:
+        email = request.data.get("email")
+
         user = User.objects.get(email=email)
-    except User.DoesNotExist:
-        return Response(
-            {"error": "No account found with that email."},
-            status=404
+
+        token = default_token_generator.make_token(user)
+
+        reset_link = (
+            f"https://smart-food-frontend-xi.vercel.app/reset-password/"
+            f"{user.id}/{token}"
         )
-    token = default_token_generator.make_token(user)
-    reset_link = (
-        f"https://smart-food-frontend-xi.vercel.app/reset-password/"
-        f"{user.id}/{token}"
-    )
-    send_mail(
-        subject="Reset your Smart Food password",
-        message=f"""
+
+        send_mail(
+            subject="Reset your Smart Food password",
+            message=f"""
 Hello {user.username},
 
 Click the link below to reset your password.
@@ -169,18 +172,28 @@ Click the link below to reset your password.
 
 If you did not request this, ignore this email.
 """,
-        from_email=None,
-        recipient_list=[email],
-        fail_silently=False,
-    )
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+            fail_silently=False,
+        )
 
-    return Response(
-        {
-            "message":
-            "Password reset link sent successfully."
-        }
-    )
+        return Response({
+            "message": "Password reset link sent successfully."
+        })
 
+    except User.DoesNotExist:
+        return Response(
+            {"error": "No account found with that email."},
+            status=404
+        )
+
+    except Exception as e:
+        traceback.print_exc()
+        return Response(
+            {"error": str(e)},
+            status=500
+        )
+        
 @api_view(["GET", "PUT"])
 @permission_classes([IsAuthenticated])
 def profile(request):
