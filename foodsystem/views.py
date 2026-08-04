@@ -150,8 +150,14 @@ def forgot_password(request):
     try:
         email = request.data.get("email")
 
-        user = User.objects.get(email=email)
+        user = User.objects.filter(email=email).first()
 
+        if not user:
+            return Response(
+                {"error": "No account found with that email."},
+                status=404
+            )
+        
         token = default_token_generator.make_token(user)
 
         reset_link = (
