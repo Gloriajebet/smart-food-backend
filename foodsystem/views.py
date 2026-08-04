@@ -165,6 +165,11 @@ def forgot_password(request):
             f"{user.id}/{token}"
         )
 
+        print("HOST:", settings.EMAIL_HOST)
+        print("PORT:", settings.EMAIL_PORT)
+        print("USER:", settings.EMAIL_HOST_USER)
+        print("PASSWORD EXISTS:", bool(settings.EMAIL_HOST_PASSWORD))
+
         send_mail(
             subject="Reset your Smart Food password",
             message=f"""
