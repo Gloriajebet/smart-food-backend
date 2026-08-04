@@ -6,6 +6,7 @@ from django.db.models import Sum, F
 from django.core.mail import send_mail
 from django.urls import reverse
 from datetime import timedelta
+from django.conf import settings
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
@@ -17,6 +18,7 @@ from .models import Recipe
 from .serializers import FoodItemSerializer
 from .serializers import RecipeSerializer
 from .serializers import UserSerializer
+import traceback
 
 class FoodItemViewSet(viewsets.ModelViewSet):
     serializer_class = FoodItemSerializer
@@ -61,16 +63,13 @@ def login_user(request):
     password = request.data.get("password")
 
     if "@" in username_or_email:
-        try:
-            user_obj = User.objects.filter(
-                email=username_or_email
-                ).first()
-            username = user_obj.username
-        except User.DoesNotExist:
+        user_obj = User.objects.filter(email=username_or_email).first()
+        if not user_obj:
             return Response(
                 {"error": "Invalid email or password"},
                 status=status.HTTP_401_UNAUTHORIZED
             )
+        username = user_obj.username
     else:
         username = username_or_email
 
@@ -96,6 +95,7 @@ def login_user(request):
     })
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def dashboard_summary(request):
     print("Authenticated:", request.user.is_authenticated)
     print("User:", request.user)
@@ -118,6 +118,7 @@ def dashboard_summary(request):
     })
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def expiry_alerts(request):
     foods = FoodItem.objects.filter(
         user=request.user
@@ -141,9 +142,6 @@ def expiry_alerts(request):
             "status": status
         })
     return Response(alerts)
-
-@from django.conf import settings
-import traceback
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
@@ -193,7 +191,7 @@ If you did not request this, ignore this email.
             {"error": str(e)},
             status=500
         )
-        
+
 @api_view(["GET", "PUT"])
 @permission_classes([IsAuthenticated])
 def profile(request):
