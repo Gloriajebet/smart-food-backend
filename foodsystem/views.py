@@ -143,6 +143,7 @@ def expiry_alerts(request):
     return Response(alerts)
 
 @api_view(["POST"])
+@permission_classes([AllowAny])
 def forgot_password(request):
     email = request.data.get("email")
     try:
