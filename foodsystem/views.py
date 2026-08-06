@@ -188,7 +188,7 @@ def forgot_password(request):
         payload = {
             "sender": {
                 "name": "Smart Food",
-                "email": settings.DEFAULT_FROM_EMAIL,
+                "email": "glorianushka@gmail.com",
             },
             "to": [{"email": user.email}],
             "subject": "Reset your Smart Food password",

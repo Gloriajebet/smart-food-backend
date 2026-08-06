@@ -64,6 +64,8 @@ from dotenv import load_dotenv
 
 load_dotenv(BASE_DIR / ".env")
 
+BREVO_API_KEY = os.getenv("BREVO_API_KEY")
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
@@ -133,8 +135,6 @@ SIMPLE_JWT = {
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-
-BREVO_API_KEY = os.getenv("BREVO_API_KEY")
 
 DEFAULT_FROM_EMAIL = "glorianushka@gmail.com"
 
