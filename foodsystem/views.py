@@ -41,7 +41,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         return Recipe.objects.filter(
             user=self.request.user
-        )
+        ).order_by("-id")
     def perform_create(self, serializer):
         recipe = serializer.save(
             user=self.request.user
