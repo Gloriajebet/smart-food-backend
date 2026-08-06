@@ -235,7 +235,7 @@ class InventoryReportAPIView(APIView):
 
             y -= 85
 
-        pdf.save("SmartFoodInventoryReport.pdf")
+        pdf.save()
 
         return response
 class WasteReportAPIView(APIView):
@@ -370,6 +370,6 @@ class WasteReportAPIView(APIView):
             "Generated automatically by Smart Food System"
         )
 
-        pdf.save("SmartFoodWasteReport.pdf");
+        pdf.save();
 
         return response
