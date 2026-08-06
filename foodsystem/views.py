@@ -3,6 +3,7 @@ from wsgiref import headers
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.hashers import make_password
 from django.utils import timezone
 from django.db.models import Sum, F
 from django.core.mail import send_mail
