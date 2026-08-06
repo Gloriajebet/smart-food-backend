@@ -36,6 +36,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeSerializer
     permission_classes = [IsAuthenticated]
     def get_queryset(self):
+        print("Current user:", self.request.user)
+        print("Authenticated:", self.request.user.is_authenticated)
+
         return Recipe.objects.filter(
             user=self.request.user
         )
