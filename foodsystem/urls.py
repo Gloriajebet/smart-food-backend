@@ -7,6 +7,8 @@ from .views import dashboard_summary
 from .views import forgot_password
 from .views import profile
 from .views import reports
+from .views import inventory_report
+from .views import waste_report
 from .views import mark_food_used
 from rest_framework_simplejwt.views import(
     TokenObtainPairView,
@@ -54,6 +56,16 @@ urlpatterns = [
     "fooditems/<int:pk>/mark-used/",
     mark_food_used,
     name="mark-food-used"
+),
+    path(
+    "reports/inventory/",
+    inventory_report,
+    name="inventory-report"
+),
+    path(
+    "reports/waste/",
+    waste_report,
+    name="waste-report"
 ),
 
 ]

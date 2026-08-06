@@ -232,6 +232,55 @@ def profile(request):
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
+def inventory_report(request):
+
+    foods = FoodItem.objects.filter(user=request.user)
+
+    return Response({
+        "foods": FoodItemSerializer(
+            foods,
+            many=True
+        ).data
+    })
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def waste_report(request):
+
+    today = timezone.now().date()
+
+    foods = FoodItem.objects.filter(user=request.user)
+
+    expired = foods.filter(
+        expiry_date__lt=today
+    ).count()
+
+    used = foods.filter(
+        is_used=True
+    ).count()
+
+    money_saved = foods.filter(
+        is_used=True,
+        used_date__isnull=False,
+        used_date__lte=F("expiry_date")
+    ).aggregate(
+        total=Sum("price")
+    )["total"] or 0
+
+    return Response({
+
+        "total_items": foods.count(),
+
+        "items_used": used,
+
+        "items_wasted": expired,
+
+        "money_saved": money_saved,
+
+    })
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def reports(request):
 
     today = timezone.now().date()
