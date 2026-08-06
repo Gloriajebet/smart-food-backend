@@ -46,6 +46,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save(
             user=self.request.user
         )
+        print("Recipe created:")
+        print("ID:", recipe.id)
+        print("Name:", recipe.name)
+        print("User:", recipe.user)
         
 @api_view(["POST"])
 @permission_classes([AllowAny])
