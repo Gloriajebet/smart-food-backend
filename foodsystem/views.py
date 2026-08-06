@@ -201,6 +201,7 @@ def forgot_password(request):
             headers=headers,
             timeout=15,
         )
+        print("BREVO_API_KEY:", settings.BREVO_API_KEY)
 
         if response.status_code >= 400:
             print(response.status_code)
