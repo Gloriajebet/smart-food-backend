@@ -7,8 +7,6 @@ from .views import dashboard_summary
 from .views import forgot_password
 from .views import profile
 from .views import reports
-from .views import inventory_report
-from .views import waste_report
 from .views import mark_food_used
 from rest_framework_simplejwt.views import(
     TokenObtainPairView,
@@ -62,25 +60,18 @@ urlpatterns = [
     mark_food_used,
     name="mark-food-used"
 ),
-    path(
+
+
+ path(
     "reports/inventory/",
-    inventory_report,
-    name="inventory-report"
-),
-    path(
-    "reports/waste/",
-    waste_report,
-    name="waste-report"
-),
-
-path(
-    "api/reports/inventory/",
     InventoryReportAPIView.as_view(),
+    name="inventory-report-api",
 ),
 
 path(
-    "api/reports/waste/",
+    "reports/waste/",
     WasteReportAPIView.as_view(),
+    name="waste-report-api",
 ),
 
 ]
