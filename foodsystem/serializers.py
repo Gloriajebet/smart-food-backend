@@ -15,11 +15,13 @@ class FoodItemSerializer(serializers.ModelSerializer):
         read_only_fields =["user"]
 
 class RecipeSerializer(serializers.ModelSerializer):
-    ingredients = serializers.SerializerMethodField()
+
     class Meta:
         model = Recipe
         fields = "__all__"
-        read_only_fields = ["user"]     
+        read_only_fields = ["user"]
 
-    def get_ingredients(self, obj):
-        return obj.ingredient_list()   
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["ingredients"] = instance.ingredient_list()
+        return data

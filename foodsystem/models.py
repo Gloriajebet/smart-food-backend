@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+import json
 
 class FoodItem(models.Model):
     user = models.ForeignKey(
@@ -47,12 +48,23 @@ class Recipe(models.Model):
         null=True
     )
 
-    def ingredient_list(self):
-        return [
-            ingredient.strip()
-            for ingredient in self.ingredients.split("\n")
-            if ingredient.strip()
-        ]
+
+def ingredient_list(self):
+
+    try:
+        data = json.loads(self.ingredients)
+
+        if isinstance(data, list):
+            return data
+
+    except Exception:
+        pass
+
+    return [
+        ingredient.strip()
+        for ingredient in self.ingredients.split("\n")
+        if ingredient.strip()
+    ]
 
     def __str__(self):
         return self.name
