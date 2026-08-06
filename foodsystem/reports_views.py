@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from django.utils import timezone
 from django.db.models import Sum, F
+from django.conf import settings
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -10,8 +11,10 @@ from rest_framework.permissions import IsAuthenticated
 from .models import FoodItem
 from reportlab.pdfgen import canvas
 from reportlab.lib.colors import HexColor, red, green, orange
+from reportlab.lib.utils import ImageReader
 from django.http import HttpResponse
 
+import os
 
 class ReportsAPIView(APIView):
 
@@ -135,6 +138,25 @@ class InventoryReportAPIView(APIView):
         pdf.setFillColor("black")
         pdf.drawString(40, 785, "Inventory Report")
 
+        logo_path = os.path.join(
+            settings.BASE_DIR,
+            "..",
+            "frontend",
+            "src",
+            "assets",
+            "BL.png"
+        )
+        logo = ImageReader(logo_path)
+        pdf.drawImage(
+    logo,
+    450,
+    760,
+    width=90,
+    height=70,
+    preserveAspectRatio=True,
+    mask='auto'
+)
+        
         pdf.setStrokeColor(greenColor)
         pdf.line(40, 775, 560, 775)
 
@@ -206,7 +228,7 @@ class InventoryReportAPIView(APIView):
 
             y -= 85
 
-        pdf.save()
+        pdf.save("SmartFoodInventoryReport.pdf")
 
         return response
 class WasteReportAPIView(APIView):
@@ -254,6 +276,26 @@ class WasteReportAPIView(APIView):
         pdf.setFont("Helvetica-Bold",16)
         pdf.setFillColor("black")
         pdf.drawString(40,785,"Waste Analysis Report")
+
+        logo_path = os.path.join(
+                    settings.BASE_DIR,
+                    "..",
+                    "frontend",
+                    "src",
+                    "assets",
+                    "BL.png"
+                )
+        logo = ImageReader(logo_path)
+        pdf.drawImage(
+            logo,
+            450,
+            760,
+            width=90,
+            height=70,
+            preserveAspectRatio=True,
+            mask='auto'
+        )
+                
 
         pdf.setStrokeColor(greenColor)
         pdf.line(40,775,560,775)
@@ -315,6 +357,6 @@ class WasteReportAPIView(APIView):
             "Generated automatically by Smart Food System"
         )
 
-        pdf.save()
+        pdf.save("SmartFoodWasteReport.pdf");
 
         return response
