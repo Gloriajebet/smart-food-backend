@@ -138,24 +138,31 @@ class InventoryReportAPIView(APIView):
         pdf.setFillColor("black")
         pdf.drawString(40, 785, "Inventory Report")
 
-        logo_path = os.path.join(
-            settings.BASE_DIR,
-            "..",
-            "frontend",
-            "src",
-            "assets",
-            "BL.png"
-        )
-        logo = ImageReader(logo_path)
-        pdf.drawImage(
-    logo,
-    450,
-    760,
-    width=90,
-    height=70,
-    preserveAspectRatio=True,
-    mask='auto'
-)
+        def draw_logo(pdf):
+            try:
+                logo_path = os.path.join(
+                    settings.BASE_DIR,
+                    "..",
+                    "foodsystem",
+                    "static",
+                    "images",
+                    "BL.png",
+                )
+                if os.path.exists(logo_path):
+                    pdf.drawImage(
+                        ImageReader(logo_path),
+                        450,
+                        760,
+                        width=90,
+                        height=70,
+                        preserveAspectRatio=True,
+                        mask='auto'
+                    )
+                else:
+                    print(f"Logo file not found at {logo_path}")
+
+            except Exception as e:
+                print(f"Error loading logo: {e}")
         
         pdf.setStrokeColor(greenColor)
         pdf.line(40, 775, 560, 775)
@@ -277,25 +284,31 @@ class WasteReportAPIView(APIView):
         pdf.setFillColor("black")
         pdf.drawString(40,785,"Waste Analysis Report")
 
-        logo_path = os.path.join(
+        def draw_logo(pdf):
+            try:
+                logo_path = os.path.join(
                     settings.BASE_DIR,
                     "..",
-                    "frontend",
-                    "src",
-                    "assets",
-                    "BL.png"
+                    "foodsystem",
+                    "static",
+                    "images",
+                    "BL.png",
                 )
-        logo = ImageReader(logo_path)
-        pdf.drawImage(
-            logo,
-            450,
-            760,
-            width=90,
-            height=70,
-            preserveAspectRatio=True,
-            mask='auto'
-        )
-                
+                if os.path.exists(logo_path):
+                    pdf.drawImage(
+                        ImageReader(logo_path),
+                        450,
+                        760,
+                        width=90,
+                        height=70,
+                        preserveAspectRatio=True,
+                        mask='auto'
+                    )
+                else:
+                    print(f"Logo file not found at {logo_path}")
+
+            except Exception as e:
+                print(f"Error loading logo: {e}")            
 
         pdf.setStrokeColor(greenColor)
         pdf.line(40,775,560,775)
