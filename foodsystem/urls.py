@@ -15,6 +15,11 @@ from rest_framework_simplejwt.views import(
     TokenRefreshView,
 )
 from .views import mark_food_used
+from foodsystem.reports_views import (
+    ReportsAPIView,
+    InventoryReportAPIView,
+    WasteReportAPIView,
+)
 
 router = DefaultRouter()
 router.register(
@@ -66,6 +71,16 @@ urlpatterns = [
     "reports/waste/",
     waste_report,
     name="waste-report"
+),
+
+path(
+    "api/reports/inventory/",
+    InventoryReportAPIView.as_view(),
+),
+
+path(
+    "api/reports/waste/",
+    WasteReportAPIView.as_view(),
 ),
 
 ]

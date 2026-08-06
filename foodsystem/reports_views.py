@@ -8,6 +8,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 from .models import FoodItem
+from reportlab.pdfgen import canvas
+from django.http import HttpResponse
 
 
 class ReportsAPIView(APIView):
@@ -107,4 +109,82 @@ class ReportsAPIView(APIView):
         for food in foods
     ]
 })
+class InventoryReportAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        foods = FoodItem.objects.filter(user=request.user)
+
+        response = HttpResponse(content_type="application/pdf")
+        response["Content-Disposition"] = 'attachment; filename="Inventory_Report.pdf"'
+
+        pdf = canvas.Canvas(response)
+
+        pdf.setFont("Helvetica-Bold", 18)
+        pdf.drawString(50, 800, "Smart Food Inventory Report")
+
+        y = 760
+
+        for food in foods:
+
+            pdf.setFont("Helvetica", 11)
+
+            pdf.drawString(
+                50,
+                y,
+                f"{food.name} | Qty: {food.quantity} {food.unit} | Expiry: {food.expiry_date}"
+            )
+
+            y -= 20
+
+            if y < 50:
+                pdf.showPage()
+                y = 800
+
+        pdf.save()
+
+        return response
+
+class WasteReportAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        foods = FoodItem.objects.filter(user=request.user)
+
+        today = timezone.now().date()
+
+        expired = foods.filter(
+            expiry_date__lt=today,
+            is_used=False
+        ).count()
+
+        used = foods.filter(
+            is_used=True,
+            used_date__lte=F("expiry_date")
+        ).count()
+
+        saved = foods.filter(
+            is_used=True,
+            used_date__lte=F("expiry_date")
+        ).aggregate(total=Sum("price"))["total"] or 0
+
+        response = HttpResponse(content_type="application/pdf")
+        response["Content-Disposition"] = 'attachment; filename="Waste_Report.pdf"'
+
+        pdf = canvas.Canvas(response)
+
+        pdf.setFont("Helvetica-Bold",18)
+        pdf.drawString(50,800,"Smart Food Waste Analysis")
+
+        pdf.setFont("Helvetica",12)
+
+        pdf.drawString(50,760,f"Items Used On Time: {used}")
+        pdf.drawString(50,735,f"Items Wasted: {expired}")
+        pdf.drawString(50,710,f"Money Saved: KSh {saved}")
+
+        pdf.save()
+
+        return response
         
