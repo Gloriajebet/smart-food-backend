@@ -49,18 +49,18 @@ class Recipe(models.Model):
     )
 
 
-def ingredient_list(self):
+    def ingredient_list(self):
 
-    try:
+      try:
         data = json.loads(self.ingredients)
 
         if isinstance(data, list):
             return data
 
-    except Exception:
+      except Exception:
         pass
 
-    return [
+      return [
         ingredient.strip()
         for ingredient in self.ingredients.split("\n")
         if ingredient.strip()
