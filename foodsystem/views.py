@@ -403,3 +403,23 @@ def mark_food_used(request, pk):
     return Response({
         "message": "Food marked as used."
     })
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def reset_password(request):
+    uid = request.data.get("uid")
+    token = request.data.get("token")
+    password = request.data.get("password")
+
+    try:
+        user = User.objects.get(id=uid)
+    except User.DoesNotExist:
+        return Response({"error": "Invalid user."}, status=400)
+
+    if not default_token_generator.check_token(user, token):
+        return Response({"error": "Invalid or expired link."}, status=400)
+
+    user.set_password(password)
+    user.save()
+
+    return Response({"message": "Password updated successfully."})

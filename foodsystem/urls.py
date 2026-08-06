@@ -1,3 +1,4 @@
+from django import views
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter 
 from .views import FoodItemViewSet, RecipeViewSet, dashboard_summary, expiry_alerts
@@ -73,5 +74,7 @@ path(
     WasteReportAPIView.as_view(),
     name="waste-report-api",
 ),
+
+path("api/reset-password/", views.reset_password),
 
 ]
