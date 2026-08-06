@@ -137,6 +137,7 @@ class InventoryReportAPIView(APIView):
 
         pdf.setStrokeColor(greenColor)
         pdf.line(40, 775, 560, 775)
+        pdf.addImage("static/images/logo.png", 500, 780, width=50, height=50)
 
         pdf.setFont("Helvetica", 11)
         pdf.drawString(
@@ -247,7 +248,7 @@ class WasteReportAPIView(APIView):
 
         greenColor = HexColor("#2c9635")
 
-        pdf.setFont("Helvetica-Bold",22)
+        pdf.setFont("Helvetica",22)
         pdf.setFillColor(greenColor)
         pdf.drawString(40,810,"Smart Food System")
 
@@ -257,6 +258,7 @@ class WasteReportAPIView(APIView):
 
         pdf.setStrokeColor(greenColor)
         pdf.line(40,775,560,775)
+        pdf.addImage("static/images/logo.png", 500, 780, width=50, height=50)
 
         pdf.setFont("Helvetica",11)
         pdf.drawString(
