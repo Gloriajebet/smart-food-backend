@@ -1,3 +1,5 @@
+from wsgiref import headers
+
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import default_token_generator
@@ -19,7 +21,8 @@ from .serializers import FoodItemSerializer
 from .serializers import RecipeSerializer
 from .serializers import UserSerializer
 import traceback
-
+import requests
+import requests
 class FoodItemViewSet(viewsets.ModelViewSet):
     serializer_class = FoodItemSerializer
     permission_classes = [IsAuthenticated]
@@ -153,62 +156,70 @@ def expiry_alerts(request):
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def forgot_password(request):
-
     try:
         email = request.data.get("email")
-
         user = User.objects.filter(email=email).first()
 
         if not user:
             return Response(
                 {"error": "No account found with that email."},
-                status=404
+                status=404,
             )
-        
-        token = default_token_generator.make_token(user)
 
+        token = default_token_generator.make_token(user)
         reset_link = (
             f"https://smart-food-frontend-xi.vercel.app/reset-password/"
             f"{user.id}/{token}"
         )
 
-        print("HOST:", settings.EMAIL_HOST)
-        print("PORT:", settings.EMAIL_PORT)
-        print("USER:", settings.EMAIL_HOST_USER)
-        print("PASSWORD EXISTS:", bool(settings.EMAIL_HOST_PASSWORD))
+        html_message = f"""
+        <p>Hello {user.username},</p>
+        <p>Click the link below to reset your password.</p>
+        <p><a href="{reset_link}">Reset Password</a></p>
+        <p>If you did not request this, ignore this email.</p>
+        """
 
-        send_mail(
-            subject="Reset your Smart Food password",
-            message=f"""
-Hello {user.username},
+        headers = {
+            "accept": "application/json",
+            "api-key": settings.BREVO_API_KEY,
+            "content-type": "application/json",
+        }
 
-Click the link below to reset your password.
+        payload = {
+            "sender": {
+                "name": "Smart Food",
+                "email": settings.DEFAULT_FROM_EMAIL,
+            },
+            "to": [{"email": user.email}],
+            "subject": "Reset your Smart Food password",
+            "htmlContent": html_message,
+        }
 
-{reset_link}
-
-If you did not request this, ignore this email.
-""",
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[email],
-            fail_silently=False,
+        response = requests.post(
+            "https://api.brevo.com/v3/smtp/email",
+            json=payload,
+            headers=headers,
+            timeout=15,
         )
 
-        return Response({
-            "message": "Password reset link sent successfully."
-        })
+        if response.status_code >= 400:
+            print(response.status_code)
+            print(response.text)
+            return Response(
+                {"error": "Failed to send email."},
+                status=500,
+            )
+
+        return Response({"message": "Password reset link sent successfully."})
 
     except User.DoesNotExist:
         return Response(
             {"error": "No account found with that email."},
-            status=404
+            status=404,
         )
-
     except Exception as e:
         traceback.print_exc()
-        return Response(
-            {"error": str(e)},
-            status=500
-        )
+        return Response({"error": str(e)}, status=500)
 
 @api_view(["GET", "PUT"])
 @permission_classes([IsAuthenticated])
