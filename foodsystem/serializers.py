@@ -23,5 +23,11 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data["ingredients"] = instance.ingredient_list()
+
+        try:
+            data["ingredients"] = instance.ingredient_list()
+        except Exception as e:
+            print("INGREDIENT ERROR:", e)
+            data["ingredients"] = []
+
         return data
